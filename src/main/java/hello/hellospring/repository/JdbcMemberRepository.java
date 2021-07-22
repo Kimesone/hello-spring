@@ -9,7 +9,9 @@ import java.util.List;
 import java.util.Optional;
 
 public class JdbcMemberRepository implements MemberRepository {
+
     private final DataSource dataSource;
+
     public JdbcMemberRepository(DataSource dataSource) {
         this.dataSource = dataSource;
     }
@@ -23,9 +25,12 @@ public class JdbcMemberRepository implements MemberRepository {
             conn = getConnection();
             pstmt = conn.prepareStatement(sql,
                     Statement.RETURN_GENERATED_KEYS);
+
             pstmt.setString(1, member.getName());
+
             pstmt.executeUpdate();
             rs = pstmt.getGeneratedKeys();
+
             if (rs.next()) {
                 member.setId(rs.getLong(1));
             } else {
@@ -38,6 +43,7 @@ public class JdbcMemberRepository implements MemberRepository {
             close(conn, pstmt, rs);
         }
     }
+
     @Override
     public Optional<Member> findById(Long id) {
         String sql = "select * from member where id = ?";
@@ -64,6 +70,7 @@ public class JdbcMemberRepository implements MemberRepository {
             close(conn, pstmt, rs);
         }
     }
+
     @Override
     public List<Member> findAll() {
         String sql = "select * from member";
@@ -87,6 +94,7 @@ public class JdbcMemberRepository implements MemberRepository {
             close(conn, pstmt, rs);
         }
     }
+
     @Override
     public Optional<Member> findByName(String name) {
         String sql = "select * from member where name = ?";
@@ -113,7 +121,7 @@ public class JdbcMemberRepository implements MemberRepository {
     }
 
     private Connection getConnection() {
-        return DataSourceUtils.getConnection(dataSource);
+        return DataSourceUtils.getConnection(dataSource);//데이타 소스를 통해 dataSource를 가져옴
     }
 
     private void close(Connection conn, PreparedStatement pstmt, ResultSet rs)
